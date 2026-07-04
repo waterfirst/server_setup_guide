@@ -162,6 +162,40 @@ Nginx·Streamlit 모두 실행 중인데도 브라우저가 404를 반환.
 
 ---
 
+### 문제 ⑥ 앱은 뜨는데 메인 포트폴리오(`/`)만 404 — 홈 디렉터리 통과 권한
+
+`/app/`(Streamlit)은 200인데, 기존 정적 포트폴리오 `http://waterfirst.pro/` 만 **404**. "동시에 두 개 호스팅이 안 되나?" 싶지만 **설정 문제가 아니라 파일 권한 문제**였다.
+
+- **원인**: Nginx는 `www-data` 유저로 실행되는데, 문서 루트로 가는 경로 `/home/waterfirst` 의 권한이 `drwxr-x---`(750)이라 **www-data가 이 디렉터리를 통과(traverse)할 수 없었다.** 그래서 `web/`에 도달하기도 전에 막힘.
+
+  Nginx 에러로그가 정확히 지목:
+  ```
+  [crit] stat() "/home/waterfirst/web/" failed (13: Permission denied),
+         server: waterfirst.pro, request: "GET / HTTP/1.1"
+  ```
+
+- **왜 예전엔 됐나?**: 이전에는 Docker 컨테이너가 `web/`를 **볼륨 마운트**하고 컨테이너 내부 **root**로 서빙했기 때문에 호스트의 홈 디렉터리 권한을 우회했다. 이번엔 Nginx가 **호스트에서 직접** `www-data`로 파일을 읽으려다 막힌 것.
+
+- **핵심 개념 — 디렉터리 `x`(실행) 비트 = "통과 권한"**: 파일 서빙에는 목표 파일까지의 **모든 상위 디렉터리에 `x` 권한**이 있어야 한다. `r`(읽기)은 목록 조회, `x`(실행)은 통과. 웹서버는 경로를 알고 접근하므로 상위 디렉터리는 `r` 없이 `x`만 있어도 된다.
+
+- **해결** (해당 디렉터리를 본인이 소유하므로 sudo 불필요):
+  ```bash
+  chmod o+x /home/waterfirst        # 750 → 751 : 통과만 허용(목록 조회는 여전히 차단)
+  chmod 755 /home/waterfirst/web    # 707 → 755 : 디렉터리 정상화
+  chmod 644 /home/waterfirst/web/*  # 정적 파일 others 읽기 보장
+  ```
+  ```bash
+  # 검증 — 두 사이트 동시 정상
+  curl -s -o /dev/null -w "%{http_code}\n" http://localhost/          # → 200 (포트폴리오)
+  curl -s -o /dev/null -w "%{http_code}\n" http://localhost/app/      # → 200 (Streamlit)
+  ```
+
+- **보안 참고**: `o+x`(751)는 다른 유저가 홈을 **통과**만 가능하게 할 뿐, 홈 내부 **목록 조회(`o+r`)는 여전히 차단**되므로 프라이버시 손실이 거의 없다. 정말 민감하면 문서 루트를 홈 밖(`/srv/www`, `/var/www`)에 두는 방법도 있다.
+
+- **결론**: Nginx의 `location / → web`, `location /app/ → streamlit` 처럼 **하나의 `server` 블록에서 경로별로 여러 서비스를 동시 호스팅하는 것은 정상 지원**된다. 404의 원인은 설정 중복이 아니라 **문서 루트 경로의 통과 권한**이었다.
+
+---
+
 ## 4. 최종 동작 구성
 
 ```
@@ -201,6 +235,8 @@ Streamlit(또는 유사 WebSocket 앱)을 Nginx 서브경로로 배포할 때:
 - [ ] **설정을 고쳤으면 반드시 반영**: `sudo nginx -t && sudo systemctl reload nginx`. (테스트가 안 맞으면 "reload 했나?"를 가장 먼저 의심)
 - [ ] 문제 격리 순서: **백엔드 직접 curl → Nginx 경유 curl** 을 나눠서 찍으면 앱 문제인지 Nginx 문제인지 즉시 갈린다.
 - [ ] 포트 충돌 확인: `ss -tlnp | grep ':80'` / `sudo docker ps`.
+- [ ] **정적 파일을 홈 디렉터리에서 서빙하면 통과 권한 확인**: 문서 루트까지의 모든 상위 디렉터리에 `www-data`가 접근할 `x` 비트가 있어야 한다 (`chmod o+x /home/USER`). Docker→Nginx 직접 서빙으로 전환할 때 특히 잘 걸린다.
+- [ ] 정적 사이트 404 시 **가장 먼저 Nginx 에러로그** 확인: `sudo tail -f /var/log/nginx/error.log` → `Permission denied`면 권한, `No such file`이면 경로 문제.
 
 ---
 
@@ -223,4 +259,9 @@ ps -o lstart= -p "$(cat /run/nginx.pid)"
 
 # 설정 검사 후 무중단 반영
 sudo nginx -t && sudo systemctl reload nginx
+
+# 정적 사이트 404 → 권한 문제 진단 (Permission denied 확인)
+sudo tail -20 /var/log/nginx/error.log | grep -i denied
+ls -ld /home /home/waterfirst /home/waterfirst/web    # 경로별 x 비트 확인
+namei -l /home/waterfirst/web/index.html              # 경로 전체 권한을 한눈에
 ```
