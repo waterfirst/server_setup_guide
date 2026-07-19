@@ -1,7 +1,5 @@
 const form = document.querySelector("#code-form");
 const promptInput = document.querySelector("#prompt");
-const modelSelect = document.querySelector("#model");
-const stackSelect = document.querySelector("#stack");
 const runButton = document.querySelector("#run-button");
 const runLabel = document.querySelector("#run-label");
 const promptLabel = document.querySelector("#prompt-label");
@@ -149,8 +147,6 @@ async function runTask() {
       body: JSON.stringify({
         prompt,
         mode: activeMode,
-        stack: stackSelect.value,
-        model: modelSelect.value,
       }),
     });
     const data = await response.json();
@@ -158,7 +154,7 @@ async function runTask() {
     rawAnswer = data.answer;
     renderAnswer(rawAnswer);
     result.classList.remove("hidden", "error-result");
-    resultMeta.textContent = `${data.model} · ${data.elapsed_seconds}초 · 입력 ${data.prompt_tokens} / 출력 ${data.completion_tokens} 토큰`;
+    resultMeta.textContent = `${data.routing_reason} · ${data.elapsed_seconds}초 · 입력 ${data.prompt_tokens} / 출력 ${data.completion_tokens} 토큰`;
     resultMeta.classList.remove("hidden");
     copyAll.disabled = false;
   } catch (error) {

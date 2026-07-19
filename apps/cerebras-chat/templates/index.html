@@ -25,7 +25,7 @@
         <p class="eyebrow">AI PAIR PROGRAMMER</p>
         <h1>한국어로 설명하면<br><span>실행 가능한 코드</span>로.</h1>
       </div>
-      <p>HTML부터 FastAPI까지, 회사에서 바로 쓸 수 있는 웹서비스를 설계하고 고친다. 요구사항은 영어 개발 명세로 정리한 뒤 코드로 변환한다.</p>
+      <p>HTML부터 FastAPI까지, 회사에서 바로 쓸 수 있는 웹서비스를 설계하고 고친다. 입력을 분석해 기술 스택과 AI 모델을 자동으로 고른다.</p>
     </section>
 
     <section class="workbench">
@@ -42,29 +42,13 @@
         </div>
 
         <form id="code-form">
-          <div class="field-row">
-            <label class="field">
-              <span>기술 스택</span>
-              <select id="stack">
-                <option value="auto">Auto · 목적에 맞게 선택</option>
-                <option value="html-css-js">HTML / CSS / JavaScript</option>
-                <option value="typescript">TypeScript</option>
-                <option value="python">Python</option>
-                <option value="react">React</option>
-                <option value="streamlit">Streamlit</option>
-                <option value="vue">Vue</option>
-                <option value="fastapi">FastAPI</option>
-                <option value="flask">Flask</option>
-              </select>
-            </label>
-            <label class="field model-field">
-              <span>AI 모델</span>
-              <select id="model">
-                <option value="gemma-4-31b">Gemma 4 31B · 빠른 작업</option>
-                <option value="gpt-oss-120b">GPT OSS 120B · 복잡한 작업</option>
-                <option value="zai-glm-4.7">ZAI GLM 4.7 · 짧은 작업</option>
-              </select>
-            </label>
+          <div class="auto-routing" aria-label="AI 자동 라우팅 설명">
+            <span class="routing-icon">A</span>
+            <div>
+              <strong>AI 자동 라우팅</strong>
+              <p>언어·프레임워크를 입력에서 추론하고, 모델별 토큰 한도와 작업 복잡도에 맞춰 최적 모델로 배분한다.</p>
+            </div>
+            <span class="routing-badge">AUTO</span>
           </div>
 
           <label class="prompt-label" for="prompt" id="prompt-label">만들고 싶은 서비스를 한글로 설명해라</label>

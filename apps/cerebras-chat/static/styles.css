@@ -60,10 +60,11 @@ h1 span { color: var(--blue); }
 .mode-tab small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .tab-icon { display: grid; place-items: center; flex: 0 0 auto; width: 29px; height: 29px; border-radius: 8px; color: var(--blue); background: #fff; font-weight: 800; }
 
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
-.field > span, .prompt-label { display: block; margin-bottom: 8px; color: #3f4a5a; font-size: 12px; font-weight: 750; }
-select { width: 100%; height: 43px; padding: 0 34px 0 11px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: #fff; font-size: 12px; }
-select:focus, textarea:focus { outline: 3px solid rgba(23,105,224,.12); border-color: var(--blue); }
+.auto-routing { display: grid; grid-template-columns: auto 1fr auto; gap: 11px; align-items: center; padding: 12px 13px; border: 1px solid #cddcf1; border-radius: 12px; background: linear-gradient(135deg, #f4f8ff, #f8f6ff); }
+.routing-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; color: #fff; background: linear-gradient(145deg, var(--blue), #7158e6); font-size: 12px; font-weight: 850; }
+.auto-routing strong { display: block; color: #284d82; font-size: 12px; }
+.auto-routing p { margin: 3px 0 0; color: #6c788a; font-size: 10px; line-height: 1.45; }
+.routing-badge { padding: 4px 7px; border: 1px solid #bcd0ee; border-radius: 999px; color: var(--blue); background: #fff; font: 800 8px ui-monospace, monospace; letter-spacing: .08em; }
 .prompt-label { margin-top: 20px; }
 .editor-shell { overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
 .editor-shell:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23,105,224,.1); }
@@ -131,7 +132,7 @@ footer p { margin: 0; }
   h1 { font-size: 35px; }
   .workbench { border-radius: 16px; }
   .input-panel { padding: 15px; }
-  .mode-tabs, .field-row { grid-template-columns: 1fr; }
+  .mode-tabs { grid-template-columns: 1fr; }
   .mode-tab { padding: 11px; }
   textarea { height: 240px; }
   .result { padding: 22px 15px 30px; }
