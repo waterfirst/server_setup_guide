@@ -1,0 +1,16 @@
+[Unit]
+Description=Waterfirst Cerebras Fast Chat
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/waterfirst/apps/cerebras-chat
+Environment="PYTHONUNBUFFERED=1"
+EnvironmentFile=/home/waterfirst/apps/cerebras-chat/.env
+ExecStart=/home/waterfirst/apps/cerebras-chat/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8502 --access-logfile - --error-logfile - app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

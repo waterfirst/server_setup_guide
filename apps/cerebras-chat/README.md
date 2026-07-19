@@ -26,10 +26,13 @@ python app.py
 cd /home/waterfirst/apps/cerebras-chat
 python3 -m venv venv
 venv/bin/pip install -r requirements.txt
-sudo cp deploy/cerebras-chat.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable --now cerebras-chat
+mkdir -p ~/.config/systemd/user
+cp deploy/cerebras-chat.user.service ~/.config/systemd/user/cerebras-chat.service
+systemctl --user daemon-reload
+systemctl --user enable --now cerebras-chat
 ```
+
+사용자 서비스가 로그아웃·재부팅 후에도 유지되려면 `loginctl show-user "$USER" -p Linger`가 `yes`여야 한다.
 
 `deploy/cerebras-chat.nginx`의 두 `location` 블록을 현재 활성 Nginx `server` 블록 안에 추가한 뒤 설정을 검사하고 다시 불러온다.
 

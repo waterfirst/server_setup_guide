@@ -3,58 +3,124 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Cerebras 초고속 AI 모델을 체험하는 간단한 채팅 웹앱">
-  <title>Cerebras Fast Chat</title>
+  <meta name="description" content="한국어 요구사항으로 웹앱 코드를 만들고 오류를 수정하는 Cerebras 개발 도구">
+  <title>CodeCraft · AI 개발 작업대</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <main class="app-shell">
-    <header class="hero">
-      <div class="brand-mark" aria-hidden="true">C</div>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="CodeCraft 홈">
+      <span class="brand-mark">&lt;/&gt;</span>
+      <span><strong>CodeCraft</strong><small>by Cerebras</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="api-status" id="api-status"><i></i> 연결 확인 중</span>
+      <a class="github-link" href="https://github.com/waterfirst-ctrl/server_setup_guide" target="_blank" rel="noreferrer">Repository ↗</a>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="intro">
       <div>
-        <p class="eyebrow">CEREBRAS API PLAYGROUND</p>
-        <h1>생각보다 빠른 AI 채팅</h1>
-        <p class="subtitle">모델을 고르고 질문해라. 응답 속도와 토큰 사용량을 바로 확인할 수 있다.</p>
+        <p class="eyebrow">AI PAIR PROGRAMMER</p>
+        <h1>한국어로 설명하면<br><span>실행 가능한 코드</span>로.</h1>
       </div>
-      <div class="status" id="api-status"><span></span> 연결 확인 중</div>
-    </header>
-
-    <section class="chat-card" aria-label="AI 채팅">
-      <div class="toolbar">
-        <label for="model">모델</label>
-        <select id="model">
-          <option value="gemma-4-31b">Gemma 4 31B · 빠른 멀티모달</option>
-          <option value="gpt-oss-120b">GPT OSS 120B · 프로덕션</option>
-          <option value="zai-glm-4.7">ZAI GLM 4.7 · 프리뷰</option>
-        </select>
-        <span class="model-note" id="model-note">65K 컨텍스트 · Preview</span>
-      </div>
-
-      <div class="messages" id="messages" aria-live="polite">
-        <article class="message assistant welcome">
-          <div class="avatar">C</div>
-          <div class="bubble">
-            <strong>준비됐다.</strong>
-            <p>아래 예시를 누르거나 직접 질문해봐.</p>
-          </div>
-        </article>
-        <div class="suggestions" id="suggestions">
-          <button type="button">양자컴퓨터를 초등학생도 이해하게 설명해줘.</button>
-          <button type="button">오늘 할 일을 우선순위 3개로 정리해줘.</button>
-          <button type="button">빠른 추론이 중요한 이유를 한 문장으로 말해줘.</button>
-        </div>
-      </div>
-
-      <form class="composer" id="chat-form">
-        <label class="sr-only" for="prompt">질문</label>
-        <textarea id="prompt" rows="1" maxlength="12000" placeholder="무엇이든 물어봐…" required></textarea>
-        <button class="send-button" id="send" type="submit" aria-label="질문 보내기">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-5 16-3-6-8-2Zm8 2 8-10"/></svg>
-        </button>
-      </form>
-      <p class="privacy">API 키는 서버에만 보관되며 브라우저로 전송되지 않는다.</p>
+      <p>HTML부터 FastAPI까지, 회사에서 바로 쓸 수 있는 웹서비스를 설계하고 고친다. 요구사항은 영어 개발 명세로 정리한 뒤 코드로 변환한다.</p>
     </section>
+
+    <section class="workbench">
+      <div class="input-panel">
+        <div class="mode-tabs" role="tablist" aria-label="작업 모드">
+          <button class="mode-tab active" type="button" data-mode="build" role="tab" aria-selected="true">
+            <span class="tab-icon">✦</span>
+            <span><strong>새 코드 만들기</strong><small>아이디어 → 영어 명세 → 코드</small></span>
+          </button>
+          <button class="mode-tab" type="button" data-mode="debug" role="tab" aria-selected="false">
+            <span class="tab-icon">⌁</span>
+            <span><strong>오류 수정하기</strong><small>코드 + 에러 → 수정 코드</small></span>
+          </button>
+        </div>
+
+        <form id="code-form">
+          <div class="field-row">
+            <label class="field">
+              <span>기술 스택</span>
+              <select id="stack">
+                <option value="auto">Auto · 목적에 맞게 선택</option>
+                <option value="html-css-js">HTML / CSS / JavaScript</option>
+                <option value="typescript">TypeScript</option>
+                <option value="python">Python</option>
+                <option value="react">React</option>
+                <option value="streamlit">Streamlit</option>
+                <option value="vue">Vue</option>
+                <option value="fastapi">FastAPI</option>
+                <option value="flask">Flask</option>
+              </select>
+            </label>
+            <label class="field model-field">
+              <span>AI 모델</span>
+              <select id="model">
+                <option value="gemma-4-31b">Gemma 4 31B · 빠른 작업</option>
+                <option value="gpt-oss-120b">GPT OSS 120B · 복잡한 작업</option>
+                <option value="zai-glm-4.7">ZAI GLM 4.7 · 짧은 작업</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="prompt-label" for="prompt" id="prompt-label">만들고 싶은 서비스를 한글로 설명해라</label>
+          <div class="editor-shell">
+            <div class="editor-bar">
+              <span class="editor-file" id="editor-file">requirements.ko.md</span>
+              <span id="char-count">0 / 12,000</span>
+            </div>
+            <textarea id="prompt" maxlength="12000" spellcheck="false" required placeholder="예: 직원들이 회의실 예약 현황을 보고 예약할 수 있는 사내용 웹앱을 만들어줘. 관리자 화면과 모바일 반응형 UI도 필요해."></textarea>
+          </div>
+
+          <div class="examples" id="examples">
+            <span>빠른 시작</span>
+            <button type="button">사내 업무 요청을 등록하고 상태를 관리하는 웹앱</button>
+            <button type="button">CSV를 올리면 매출 차트를 보여주는 대시보드</button>
+          </div>
+
+          <button class="run-button" id="run-button" type="submit">
+            <span id="run-label">영어 명세로 바꾸고 코드 만들기</span>
+            <kbd>Ctrl ↵</kbd>
+          </button>
+        </form>
+      </div>
+
+      <div class="output-panel">
+        <div class="output-bar">
+          <div>
+            <span class="window-dot red"></span><span class="window-dot yellow"></span><span class="window-dot green"></span>
+            <strong>AI 결과</strong>
+          </div>
+          <button class="copy-all" id="copy-all" type="button" disabled>전체 복사</button>
+        </div>
+        <div class="output-empty" id="output-empty">
+          <div class="empty-icon">{ }</div>
+          <h2>개발 준비 완료</h2>
+          <p>왼쪽에 요구사항이나 오류가 발생한 코드를 입력해라.<br>분석 결과와 실행 가능한 수정 코드를 여기에 표시한다.</p>
+          <div class="stack-cloud" aria-label="지원 기술">
+            <span>HTML</span><span>TypeScript</span><span>Python</span><span>React</span><span>Streamlit</span><span>Vue</span><span>FastAPI</span><span>Flask</span>
+          </div>
+        </div>
+        <div class="output-loading hidden" id="output-loading" aria-live="polite">
+          <div class="loader-code"><span>&lt;</span><i></i><span>/&gt;</span></div>
+          <strong id="loading-title">요구사항을 영어 명세로 정리하는 중…</strong>
+          <p>선택한 스택에 맞는 구조와 코드를 생성하고 있다.</p>
+        </div>
+        <article class="result hidden" id="result" aria-live="polite"></article>
+        <div class="result-meta hidden" id="result-meta"></div>
+      </div>
+    </section>
+
+    <footer>
+      <p>API 키는 노트북 서버에만 저장된다. 브라우저 코드와 응답에 포함되지 않는다.</p>
+      <p>Powered by Cerebras Inference</p>
+    </footer>
   </main>
+
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
