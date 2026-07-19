@@ -1,0 +1,23 @@
+[Unit]
+Description=Waterfirst Cerebras Fast Chat
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=waterfirst
+Group=waterfirst
+WorkingDirectory=/home/waterfirst/apps/cerebras-chat
+Environment="HOME=/home/waterfirst"
+Environment="PYTHONUNBUFFERED=1"
+EnvironmentFile=/home/waterfirst/apps/cerebras-chat/.env
+ExecStart=/home/waterfirst/apps/cerebras-chat/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8502 --access-logfile - --error-logfile - app:app
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target

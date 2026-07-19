@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cerebras 초고속 AI 모델을 체험하는 간단한 채팅 웹앱">
+  <title>Cerebras Fast Chat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="brand-mark" aria-hidden="true">C</div>
+      <div>
+        <p class="eyebrow">CEREBRAS API PLAYGROUND</p>
+        <h1>생각보다 빠른 AI 채팅</h1>
+        <p class="subtitle">모델을 고르고 질문해라. 응답 속도와 토큰 사용량을 바로 확인할 수 있다.</p>
+      </div>
+      <div class="status" id="api-status"><span></span> 연결 확인 중</div>
+    </header>
+
+    <section class="chat-card" aria-label="AI 채팅">
+      <div class="toolbar">
+        <label for="model">모델</label>
+        <select id="model">
+          <option value="gemma-4-31b">Gemma 4 31B · 빠른 멀티모달</option>
+          <option value="gpt-oss-120b">GPT OSS 120B · 프로덕션</option>
+          <option value="zai-glm-4.7">ZAI GLM 4.7 · 프리뷰</option>
+        </select>
+        <span class="model-note" id="model-note">65K 컨텍스트 · Preview</span>
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite">
+        <article class="message assistant welcome">
+          <div class="avatar">C</div>
+          <div class="bubble">
+            <strong>준비됐다.</strong>
+            <p>아래 예시를 누르거나 직접 질문해봐.</p>
+          </div>
+        </article>
+        <div class="suggestions" id="suggestions">
+          <button type="button">양자컴퓨터를 초등학생도 이해하게 설명해줘.</button>
+          <button type="button">오늘 할 일을 우선순위 3개로 정리해줘.</button>
+          <button type="button">빠른 추론이 중요한 이유를 한 문장으로 말해줘.</button>
+        </div>
+      </div>
+
+      <form class="composer" id="chat-form">
+        <label class="sr-only" for="prompt">질문</label>
+        <textarea id="prompt" rows="1" maxlength="12000" placeholder="무엇이든 물어봐…" required></textarea>
+        <button class="send-button" id="send" type="submit" aria-label="질문 보내기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-5 16-3-6-8-2Zm8 2 8-10"/></svg>
+        </button>
+      </form>
+      <p class="privacy">API 키는 서버에만 보관되며 브라우저로 전송되지 않는다.</p>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
